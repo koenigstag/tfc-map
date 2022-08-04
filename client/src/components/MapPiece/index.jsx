@@ -8,7 +8,13 @@ import Hideable from '../Hideable';
 
 import useMapPieceStyles from './MapPiece.styles.js';
 
-const MapPiece = ({ pieceIndex = -1, imgSrc = '', filename = '', onRemoveClick = () => {}, defaultPos = { x: 0, y: 0 } }) => {
+const MapPiece = ({
+  imgSrc = '',
+  filename = '',
+  onRemoveClick = () => {},
+  defaultPos = { x: 0, y: 0 },
+  onDragStop = () => {},
+}) => {
   const classes = useMapPieceStyles();
 
   const [isDragMode, setIsDragMode] = useState(false);
@@ -21,8 +27,14 @@ const MapPiece = ({ pieceIndex = -1, imgSrc = '', filename = '', onRemoveClick =
     setIsDragMode(state);
   }, []);
 
+  const handleDragStop = useCallback((mouseEvent, props) => onDragStop(filename, props), [filename, onDragStop]);
+
   return (
-    <Draggable disabled={!isDragMode} defaultPosition={defaultPos}>
+    <Draggable
+      disabled={!isDragMode}
+      defaultPosition={defaultPos}
+      onStop={handleDragStop}
+    >
       <Box className={classes.root}>
         <Box className={classes.container}>
           <Hideable hide={showMenu}>
@@ -49,7 +61,7 @@ const MapPiece = ({ pieceIndex = -1, imgSrc = '', filename = '', onRemoveClick =
               onActionClicked={handleToggleShowMenu}
               isDragMode={isDragMode}
               onDragModeChange={handleDragModeChange}
-              onRemoveClick={(e) => onRemoveClick(e, pieceIndex)}
+              onRemoveClick={(e) => onRemoveClick(e, filename)}
             />
           </Hideable>
           <img

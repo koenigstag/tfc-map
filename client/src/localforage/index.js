@@ -1,6 +1,6 @@
 import localforage from 'localforage';
-import config from '../config/localforage';
+import localforageConfig from '../config/localforage';
 
-const client = localforage.createInstance(config);
+const client = localforage.createInstance(localforageConfig);
 
 export default client;

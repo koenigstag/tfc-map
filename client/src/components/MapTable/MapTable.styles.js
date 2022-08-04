@@ -2,9 +2,13 @@ import makeStyles from "../../utils/makeStyles";
 
 const useMapTableStyles = makeStyles({
   root: {
-    width: '100%',
+    minWidth: '100%',
     minHeight: '100vh',
     background: 'black',
+  },
+  map: {
+    minWidth: '100%',
+    minHeight: '100vh',
   },
 });
 

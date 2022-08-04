@@ -1,7 +1,71 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
+import Draggable from 'react-draggable';
+import { Box, IconButton } from '@mui/material';
+import { Close, Settings } from '@mui/icons-material';
 
-const MapPiece = () => {
-  return <div>MapPiece</div>;
+import MapPieceControls from '../MapPieceControls';
+import Hideable from '../Hideable';
+
+import useMapPieceStyles from './MapPiece.styles.js';
+
+const MapPiece = ({ pieceIndex = -1, imgSrc = '', filename = '', onRemoveClick = () => {}, defaultPos = { x: 0, y: 0 } }) => {
+  const classes = useMapPieceStyles();
+
+  const [isDragMode, setIsDragMode] = useState(false);
+
+  const [showMenu, setShowMenu] = useState(false);
+
+  const handleToggleShowMenu = useCallback(() => setShowMenu((s) => !s), []);
+
+  const handleDragModeChange = useCallback((state) => {
+    setIsDragMode(state);
+  }, []);
+
+  return (
+    <Draggable disabled={!isDragMode} defaultPosition={defaultPos}>
+      <Box className={classes.root}>
+        <Box className={classes.container}>
+          <Hideable hide={showMenu}>
+            <IconButton
+              className={classes.settingsButton}
+              onClick={handleToggleShowMenu}
+            >
+              <Settings />
+            </IconButton>
+          </Hideable>
+          <Hideable show={showMenu}>
+            <MapPieceControls
+              className={classes.controls}
+              additionalActions={[
+                {
+                  key: 'close',
+                  title: 'Close',
+                  content: <Close />,
+                  style: {
+                    marginLeft: '3px',
+                  },
+                },
+              ]}
+              onActionClicked={handleToggleShowMenu}
+              isDragMode={isDragMode}
+              onDragModeChange={handleDragModeChange}
+              onRemoveClick={(e) => onRemoveClick(e, pieceIndex)}
+            />
+          </Hideable>
+          <img
+            draggable={false}
+            className={classes.image}
+            style={{
+              cursor: isDragMode ? 'all-scroll' : 'auto',
+              borderColor: isDragMode ? 'rgba(0, 0, 0, 0.5)' : 'transparent',
+            }}
+            src={imgSrc}
+            alt={filename}
+          />
+        </Box>
+      </Box>
+    </Draggable>
+  );
 };
 
 export default MapPiece;
